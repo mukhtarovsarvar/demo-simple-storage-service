@@ -7,6 +7,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.springframework.stereotype.Service;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
@@ -39,19 +40,23 @@ public class BucketServiceImpl implements BucketService {
     @Override
     public void getObjectFromBucket(String bucketName, String objectName) throws IOException {
         S3Object object = s3Client.getObject(bucketName, objectName);
-        Optional.ofNullable(object)
-                .ifPresent(item -> {
-                    LOG.info("name = {}",item.getKey());
-                });
+        Optional
+                .ofNullable(object)
+                .ifPresent(item -> LOG.info("name = {}", item.getKey()));
     }
 
     @Override
-    public void putObjectIntoBucket(String bucketName, String objectName, String filePathToUpload) {
+    public void putObjectIntoBucket(String bucketName, String objectName, File file) {
+        s3Client.putObject(bucketName, objectName, file);
+    }
 
+    @Override
+    public void deleteBucket(String bucket) {
+        s3Client.deleteBucket(bucket);
     }
 
     @Override
     public void createBucket(String bucket) {
-
+        s3Client.createBucket(bucket);
     }
 }
